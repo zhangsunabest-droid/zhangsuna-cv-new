@@ -1,65 +1,59 @@
+"use client";
 import Image from "next/image";
+import {AnimatePresence,motion,useInView,useMotionValue,useSpring,useTransform} from "framer-motion";
+import {ArrowUpRight,Compass,Rocket,Sparkles,Target} from "lucide-react";
+import {useEffect,useMemo,useRef,useState} from "react";
 
-export default function Home() {
-  return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
-  );
+type M={label:string;value:number;prefix?:string;suffix?:string;progress:number;important?:boolean};
+const nav=[["#about","身份定位"],["#experience","我的履历"],["#performance","个人业绩"],["#os","个人成长与收获"],["#vitality","生命力时刻"],["#moonshot","酷聚登月计划"],["#ai","我的AI探索"]] as const;
+const ms:M[]=[{label:"有效线索",value:3361,suffix:"+",progress:84},{label:"历史线索累计成交",value:2593.66,prefix:"¥",suffix:"万",progress:96,important:true},{label:"核心行业关键词搜索排名",value:3,prefix:"TOP ",progress:78},{label:"线索转化处理率",value:99.4,suffix:"%",progress:99}];
+const ex=[
+["2023-至今","上海桥田智能｜总经理助理兼市场负责人",["主导公司级战略BOP制定，推动3轮上亿元融资（汇川/吉利/美的/浙创投等）","从0到1建立品牌矩阵，助力企业跻身行业第一梯队","战略落地推动人，推动公司连续三年实现目标落地","建立市场推广与订单转化完整闭环，实现9%成交转化率"]],
+["2022-2023","霍尼韦尔 Honeywell｜市场经理",["主导全新事业部GTM（Go-to-Market）策略，在世界500强体系内完成跨国标准化方法论实战"]],
+["2017-2022","某物联网领军企业 Ruff｜市场VP",["五年实现职场跃迁，主导数个“卡脖子”技术商业化项目，点亮国内首个物联网操作系统品牌"]]
+] as const;
+
+function Count({value,prefix="",suffix=""}:{value:number;prefix?:string;suffix?:string}){const r=useRef<HTMLSpanElement>(null);const iv=useInView(r,{once:true,margin:"-80px"});const mv=useMotionValue(0);const sv=useSpring(mv,{damping:24,stiffness:90});const d=Number.isInteger(value)?0:2;const out=useTransform(sv,v=>v.toFixed(d));useEffect(()=>{if(iv)mv.set(value)},[iv,mv,value]);useEffect(()=>{const u=out.on("change",v=>{if(r.current)r.current.textContent=`${prefix}${v}${suffix}`});return u},[out,prefix,suffix]);return <span ref={r}>{`${prefix}0${d?".00":""}${suffix}`}</span>}
+
+function Metric({m,i}:{m:M;i:number}){const r=useRef<HTMLDivElement>(null);const iv=useInView(r,{once:true,margin:"-100px"});return <motion.article ref={r} className={`rounded-2xl border border-white/8 bg-[#112240]/12 p-6 transition-all duration-300 hover:-translate-y-0.5 hover:border-[#E2BC7A]/55 hover:bg-[linear-gradient(135deg,rgba(24,49,88,.92),rgba(17,34,64,.96))] hover:shadow-[0_16px_40px_rgba(0,0,0,.45)] ${m.important?"shadow-[0_0_34px_rgba(226,188,122,0.24)]":""}`} initial={{opacity:0,y:16}} whileInView={{opacity:1,y:0}} viewport={{once:true}} transition={{duration:.5,delay:i*.1}}><p className="text-3xl font-semibold text-[#E2BC7A]"><Count value={m.value} prefix={m.prefix} suffix={m.suffix}/></p><p className="mt-2 text-sm text-[#ccd6f6]/85">{m.label}</p><div className="mt-5 h-2 overflow-hidden rounded-full bg-[#233554]"><motion.div className={`h-full origin-left rounded-full ${m.important?"bg-[#E2BC7A]":"bg-[#64ffda]"}`} initial={{scaleX:0}} animate={{scaleX:iv?m.progress/100:0}} transition={{duration:.9,delay:.2+i*.1,ease:"easeOut"}}/></div></motion.article>}
+
+function Shot({src,alt,circle=false}:{src:string;alt:string;circle?:boolean}){return <div className={`relative overflow-hidden border border-white/15 bg-[#112240]/60 ${circle?"mx-auto h-48 w-48 rounded-full":"aspect-[4/3] rounded-xl"}`}><Image src={src} alt={alt} fill className="object-cover" sizes={circle?"192px":"(max-width:768px) 100vw, 33vw"}/></div>}
+
+function SectionHeader({text}:{text:string}){return <div className="mt-16 mb-6 flex items-center gap-4"><h2 className="title text-xl font-semibold tracking-widest text-slate-200">{text}</h2><span className="h-px flex-1 bg-slate-700"/></div>}
+
+const Fade=({children}:{children:React.ReactNode})=><motion.div initial={{opacity:0,y:16}} whileInView={{opacity:1,y:0}} viewport={{once:true}} transition={{duration:.5}}>{children}</motion.div>;
+
+export default function Home(){
+const [launched,setLaunched]=useState(false);const [expanding,setExpanding]=useState(false);const [xy,setXY]=useState({x:0,y:0});
+useEffect(()=>{if(!expanding)return;const t=setTimeout(()=>setLaunched(true),1500);return()=>clearTimeout(t)},[expanding]);
+
+
+const links=useMemo(()=>[["桥田智能2025年市场部汇报","https://qiaotianmr-lnagn8rk.manus.space/"],["桥田市场资讯平台 QMA","https://qmaqt.manus.space/"],["GEO 实战学习平台","https://geolearnhub-susan.manus.space/"],["测测你的AI商","https://sunarich.zeabur.app/"]] as const,[]);
+
+return <div className="relative min-h-screen bg-[#0a192f] text-[#ccd6f6]" onMouseMove={e=>setXY({x:e.clientX,y:e.clientY})}>
+<div className="pointer-events-none fixed inset-0 z-10" style={{background:`radial-gradient(520px at ${xy.x}px ${xy.y}px, rgba(120,170,255,.08), rgba(226,188,122,.04) 30%, transparent 72%)`}}/>
+<AnimatePresence>{!launched&&<motion.div className="fixed inset-0 z-[100] flex cursor-pointer flex-col items-center justify-center bg-black text-[#E2BC7A]" initial={{opacity:1}} animate={{opacity:expanding?0:1}} transition={{duration:1.5}} onClick={()=>!expanding&&setExpanding(true)}><motion.div className="absolute h-32 w-32 rounded-full border border-[#E2BC7A]/80" animate={{scale:[1,1.08,1],opacity:[.7,1,.7]}} transition={{duration:2.4,repeat:Infinity}}/><motion.div className="absolute h-32 w-32 rounded-full border border-[#E2BC7A]/30" animate={{scale:expanding?28:1,opacity:expanding?0:.7}} transition={{duration:1.5,ease:"easeOut"}}/><h1 className="relative z-10 text-3xl font-semibold tracking-[0.08em]">Gotchash x Suna Zhang</h1><p className="relative z-10 mt-24 text-sm text-[#E2BC7A]/80">Click to launch Moonshot Mission...</p></motion.div>}</AnimatePresence>
+
+<div className="relative z-20 mx-auto max-w-7xl px-6 pb-20 pt-8 md:px-10">
+<div className="mb-8 flex flex-wrap gap-3 border-b border-white/15 pb-4 lg:hidden">{nav.map(([h,l])=><a key={h} href={h} className="text-sm text-[#ccd6f6]/75 hover:text-[#E2BC7A]">{l}</a>)}</div>
+<div className="grid gap-14 lg:grid-cols-5 lg:gap-16">
+<aside className="lg:col-span-2 lg:sticky lg:top-0 lg:h-screen lg:py-10"><motion.div initial={{opacity:0,y:18}} animate={{opacity:1,y:0}} transition={{duration:.6}}><p className="text-sm uppercase tracking-[0.2em] text-[#E6F1FF]/85">ZHANGSUNA CV</p><h1 className="mt-4 text-5xl font-bold tracking-tight">张苏娜 · Suna Zhang</h1><p className="mt-3 text-[#ccd6f6]/90">战略驱动型市场副总裁 ｜ 创始人助理</p><p className="mt-4 max-w-md text-[#ccd6f6]/75">想到就能做到，做到就能看到</p><nav className="mt-10 hidden space-y-4 lg:block">{nav.map(([h,l])=><a key={h} href={h} className="group flex items-center gap-3 text-sm text-[#ccd6f6]/70"><span className="h-px w-8 bg-white/30 transition group-hover:w-14 group-hover:bg-[#E2BC7A]"/><span className="transition-all group-hover:font-semibold group-hover:text-[#E2BC7A]">{l}</span></a>)}</nav><a href="#" className="mt-12 inline-flex items-center gap-2 rounded-full border border-[#E2BC7A]/60 px-5 py-3 text-sm font-medium text-[#E2BC7A] hover:bg-[#E2BC7A]/10"><Rocket className="h-4 w-4"/>Download Full CV</a></motion.div></aside>
+
+<main className="space-y-8 pb-14 lg:col-span-3 lg:space-y-12 lg:py-10">
+<Fade><section id="about" className="card"><SectionHeader text="Section 1 · 关于我（The Anchor: 身份定位）"/><div className="mt-4"><p>13年硬核科技市场战略专家，深耕工业物联网与机器人赛道我擅长将复杂的“技术语言”转化为高增长的“市场价值”，曾助力企业实现<span className="font-semibold text-[#E2BC7A]">从0到1</span>的品牌构建及数千万级的商业化突破</p><p className="mt-3 text-[#ccd6f6]/85">在桥田智能期间，我主导公司级BOP战略落地，并凭借极强的资源整合能力，在三年内协同完成三轮<span className="font-semibold text-[#E2BC7A]">总额2亿元</span>的战略融资（投资方包括汇川、吉利、美的、浙创投等）</p><ul className="mt-4 list-disc space-y-2 pl-5 text-[#ccd6f6]/85"><li className="font-semibold italic">数据驱动的实战派：曾创造年获客线索3000+、直接拉动营收<span className="font-semibold text-[#E2BC7A]">超2500万</span>的增长纪录</li><li className="font-semibold italic">敏锐的行业洞察者：不仅精通B2B内容营销矩阵，更前瞻性关注<span className="font-semibold text-[#E2BC7A]">AI与GEO</span>（生成式AI优化）趋势</li><li className="font-semibold italic">高能量的跨界复合人才：复旦新闻本科奠定传播敏感度，上财EMBA构建商业架构力，具备产品思维、商业思维与带兵打硬仗的统筹能量</li></ul></div></section></Fade>
+
+<section id="experience" className="card"><SectionHeader text="Section 2 · 我的履历（The Experience: 职场厚度）"/><div className="mt-6 space-y-4">{ex.map((e,i)=><motion.article key={e[0]} className="group rounded-xl border border-white/8 bg-[#112240]/10 p-4 transition-all duration-300 hover:-translate-y-0.5 hover:border-[#E2BC7A]/60 hover:bg-[linear-gradient(135deg,rgba(24,49,88,.92),rgba(17,34,64,.96))] hover:shadow-[0_16px_40px_rgba(0,0,0,.45)]" initial={{opacity:0,y:16}} whileInView={{opacity:1,y:0}} viewport={{once:true}} transition={{duration:.45,delay:i*.1}}><div><p className="text-sm text-[#E2BC7A]">{e[0]}</p><h3 className="mt-1 font-medium">{e[1]}</h3><ul className="mt-2 list-disc space-y-1 pl-5 text-sm text-[#ccd6f6]/80">{e[2].map((x)=> <li key={x}>{x}</li>)}</ul></div></motion.article>)}</div></section>
+
+<section id="performance" className="card"><SectionHeader text="Section 3 · 个人业绩（The Achievements: 数据驾驶舱）"/><div className="mt-6 grid gap-4 md:grid-cols-2"><motion.article className="h-full rounded-xl border border-white/8 bg-[#112240]/12 p-5 transition-all duration-300 hover:-translate-y-0.5 hover:border-[#E2BC7A]/55 hover:bg-[linear-gradient(135deg,rgba(24,49,88,.92),rgba(17,34,64,.96))] hover:shadow-[0_16px_40px_rgba(0,0,0,.45)]" initial={{opacity:0,y:16}} whileInView={{opacity:1,y:0}} viewport={{once:true}} transition={{duration:.45}}><h3 className="font-medium text-[#E2BC7A]">2025年度市场战报</h3><ul className="mt-3 list-disc space-y-2 pl-5 text-sm leading-7 text-[#ccd6f6]/90"><li>品牌声量：核心行业关键词搜索及GEO排名TOP 3</li><li>战略客户：利用G-T-M策略，攻克奔驰、美的标杆客户</li></ul></motion.article><motion.article className="h-full rounded-xl border border-white/8 bg-[#112240]/12 p-5 transition-all duration-300 hover:-translate-y-0.5 hover:border-[#E2BC7A]/55 hover:bg-[linear-gradient(135deg,rgba(24,49,88,.92),rgba(17,34,64,.96))] hover:shadow-[0_16px_40px_rgba(0,0,0,.45)]" initial={{opacity:0,y:16}} whileInView={{opacity:1,y:0}} viewport={{once:true}} transition={{duration:.45,delay:.05}}><h3 className="font-medium text-[#E2BC7A]">标杆项目：磁力换模国产化替代</h3><ul className="mt-3 list-disc space-y-2 pl-5 text-sm leading-7 text-[#ccd6f6]/90"><li>客户：成功敲开吉利、美的、长城等头部大客户供应链</li><li>价值：公司内部实现新产品客户流程开发与项目管理落地</li></ul></motion.article></div><div className="mt-5 grid gap-4 md:grid-cols-2">{ms.map((m,i)=><Metric key={m.label} m={m} i={i}/>)}</div></section>
+
+<section id="os" className="card"><SectionHeader text="Section 4 · 个人成长与收获（The Evolution: 管理OS）"/><div className="mt-5 rounded-xl border border-white/8 bg-[#112240]/10 p-5 transition-all duration-300 hover:-translate-y-0.5 hover:border-[#E2BC7A]/55 hover:bg-[linear-gradient(135deg,rgba(24,49,88,.92),rgba(17,34,64,.96))] hover:shadow-[0_16px_40px_rgba(0,0,0,.45)]"><div className="grid gap-4 md:grid-cols-[180px_1fr] md:items-start"><Shot src="/p1.png" alt="os 1"/><div><p className="font-medium text-[#E2BC7A]">战略规划与落地</p><ul className="mt-2 list-disc space-y-1 pl-5 text-sm text-[#ccd6f6]/85"><li>BOP战略全景目标管理：将战略洞察、BOP目标规划、战略任务以及落地跟进成功落地，并有效运转三年</li><li>战略落地推动人：建立管理层周/月度经营分析会议跟进模式，实现“目标有效落地与跟进”</li></ul></div></div></div><div className="mt-5 rounded-xl border border-white/8 bg-[#112240]/10 p-5 transition-all duration-300 hover:-translate-y-0.5 hover:border-[#E2BC7A]/55 hover:bg-[linear-gradient(135deg,rgba(24,49,88,.92),rgba(17,34,64,.96))] hover:shadow-[0_16px_40px_rgba(0,0,0,.45)]"><div className="grid gap-4 md:grid-cols-[180px_1fr] md:items-start"><Shot src="/c2.jpeg" alt="academic journey"/><div><h3 className="font-medium text-[#E2BC7A]">外挂式学习历程 (Academic Journey)</h3><ul className="mt-3 list-disc space-y-2 pl-5 text-sm text-[#ccd6f6]/90"><li><span className="font-semibold">复旦大学新闻学：</span>建立内容有效营销的根基</li><li><span className="font-semibold">上财 EMBA：</span>认知重塑，系统化构建商业逻辑</li><li><span className="font-semibold">标签：</span>社会型学霸、持续学习、高能量人群</li></ul></div></div></div></section>
+
+<Fade><section id="vitality" className="card"><SectionHeader text="Section 5 · 生命力时刻（The Vitality: 鸵鸟精神）"/><div className="mt-5 space-y-4"><div className="grid gap-4 rounded-xl border border-white/8 bg-[#112240]/10 p-4 transition-all duration-300 hover:-translate-y-0.5 hover:border-[#E2BC7A]/55 hover:bg-[linear-gradient(135deg,rgba(24,49,88,.92),rgba(17,34,64,.96))] hover:shadow-[0_16px_40px_rgba(0,0,0,.45)] md:grid-cols-[150px_1fr] md:items-start"><Shot src="/d1.png" alt="vitality ip"/><div><h3 className="text-lg font-semibold text-[#E2BC7A]">个人IP：娜只鸵鸟</h3><ul className="mt-2 list-disc space-y-2 pl-5 text-sm text-[#ccd6f6]/90"><li>展示对AI工具（Cursor/Gemini）的应用能力及行业洞察短视频，记录成长经验与收获</li></ul></div></div><div className="grid gap-4 rounded-xl border border-white/8 bg-[#112240]/10 p-4 transition-all duration-300 hover:-translate-y-0.5 hover:border-[#E2BC7A]/55 hover:bg-[linear-gradient(135deg,rgba(24,49,88,.92),rgba(17,34,64,.96))] hover:shadow-[0_16px_40px_rgba(0,0,0,.45)] md:grid-cols-[150px_1fr] md:items-start"><Shot src="/d2.jpeg" alt="vitality challenge"/><div><h3 className="text-lg font-semibold text-[#E2BC7A]">极限挑战：第十七届戈壁赛（120km）</h3><ul className="mt-2 list-disc space-y-2 pl-5 text-sm text-[#ccd6f6]/90"><li>“大多数人觉得无法完成的挑战，原来我也可以”</li><li>务实、持久、不妥协，直面现实并快速反应</li></ul></div></div><div className="grid gap-4 rounded-xl border border-white/8 bg-[#112240]/10 p-4 transition-all duration-300 hover:-translate-y-0.5 hover:border-[#E2BC7A]/55 hover:bg-[linear-gradient(135deg,rgba(24,49,88,.92),rgba(17,34,64,.96))] hover:shadow-[0_16px_40px_rgba(0,0,0,.45)] md:grid-cols-[150px_1fr] md:items-start"><Shot src="/d3.jpeg" alt="vitality life"/><div><h3 className="text-lg font-semibold text-[#E2BC7A]">日常life：月均150km，热爱拳击+普拉提</h3><ul className="mt-2 list-disc space-y-2 pl-5 text-sm text-[#ccd6f6]/90"><li>运动是保持高能量的最佳方式</li><li>随时保持战斗状态</li></ul></div></div></div></section></Fade>
+
+<Fade><section id="moonshot" className="card"><SectionHeader text="Section 6 · 酷聚登月计划（Gotchash Moonshot: 破局提案）"/><div className="mt-5 rounded-xl border border-white/8 bg-[#112240]/10 p-4 transition-all duration-300 hover:-translate-y-0.5 hover:border-[#E2BC7A]/55 hover:bg-[linear-gradient(135deg,rgba(24,49,88,.92),rgba(17,34,64,.96))] hover:shadow-[0_16px_40px_rgba(0,0,0,.45)]"><div><p className="text-[#E2BC7A]">诊断面临的“引力”</p><ul className="mt-2 list-disc space-y-1 pl-5 text-sm text-[#ccd6f6]/85"><li>认知壁垒：液体透镜技术前沿，市场教育成本高</li><li>巨头垄断：对 Varioptic 等国际品牌的路径依赖严重</li></ul><p className="mt-4 text-[#E2BC7A]">我的“发射”方案</p><ul className="mt-2 space-y-3 text-sm text-[#ccd6f6]/85"><li className="flex gap-2"><Target className="mt-0.5 h-4 w-4 text-[#E2BC7A]"/>策略一：聚焦机器视觉/读码赛道，打造“标杆客户案例”，以点带面</li><li className="flex gap-2"><Compass className="mt-0.5 h-4 w-4 text-[#E2BC7A]"/>策略二：强化国产替代心智，已经从价格替代过渡到性能替代</li><li className="flex gap-2"><Sparkles className="mt-0.5 h-4 w-4 text-[#E2BC7A]"/>策略三：GEO（AI搜索优化）专项修复彻底纠正目前AI对酷聚的误读（幻觉），向大模型精准“喂料”，抢占AI时代流量入口</li></ul></div></div></section></Fade>
+
+<section id="ai" className="card"><SectionHeader text="Section 7 · 我的AI探索"/><div className="mt-5 grid gap-4 sm:grid-cols-2">{links.map((l,i)=><motion.a key={l[1]} href={l[1]} target="_blank" rel="noreferrer" className="group rounded-xl border border-white/8 bg-[#112240]/10 p-4 transition-all duration-300 hover:-translate-y-0.5 hover:border-[#E2BC7A]/55 hover:bg-[linear-gradient(135deg,rgba(24,49,88,.92),rgba(17,34,64,.96))] hover:shadow-[0_16px_40px_rgba(0,0,0,.45)]" initial={{opacity:0,y:16}} whileInView={{opacity:1,y:0}} viewport={{once:true}} transition={{duration:.45,delay:i*.08}}><p className="text-sm font-medium">{l[0]}</p><p className="mt-3 inline-flex items-center gap-1 text-xs text-[#E2BC7A]">Open Link <ArrowUpRight className="h-3.5 w-3.5"/></p></motion.a>)}</div></section>
+</main></div></div>
+<style jsx>{`.card{background:transparent;border-radius:0;padding:0 0 1.25rem;border-bottom:1px solid rgba(204,214,246,.08)}.card:last-of-type{border-bottom:none;padding-bottom:0}.title{margin:0}`}</style>
+</div>
 }
